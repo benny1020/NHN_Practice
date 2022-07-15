@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 테스트</title>
+</head>
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script>
+    function deleteSubmit(productNo) {
+        //console.log(productNo);
+        //var inputData = {"productNo" : parseInt(productNo)};
+        //console.log(inputData)
+
+        $.ajax({
+            type: "DELETE",
+            url:"/product/"+productNo,
+            dataType : 'json',
+            contentType:"application/json;charset=UTF-8",
+        });
+    }
+    function putSubmit(productNo,productName,salePrice) {
+        $.ajax({
+            type: "PUT",
+            url:"/product",
+            data: {
+                "productNo":productNo,
+                "productName":productName,
+                "salePrice":salePrice
+            },
+            dataType:"text"
+        })
+    }
+</script>
+<body>
+    <h1>상품 목록 조회</h1>
+    <table border="1">
+        <th>상품 번호</th>
+        <th>상품 이름</th>
+        <th>상품 가격</th>
+        <th>등록 날짜</th>
+        <th>수정 날짜</th>
+        <th></th>
+        <th></th>
+
+        <tr th:each = "product : ${productList}" >
+            <form method="POST" action="/product" th:id="${product.productNo}">
+            <td><span name="productNo" th:text="${product.productNo}"></span></td>
+            <td><label><input name="productName" type="text" th:value="${product.productName}"></label></td>
+            <td><label><input name="salePrice" type="text" th:value="${product.salePrice}"></label></td>
+            <td><span th:text="${product.registerYmdt}"></span></td>
+            <td><span th:text="${product.updateYmdt}"></span></td>
+                <td><span><input type="button" value="수정" th:name="${product.productName}" th:no="${product.productNo}" th:price = "${product.salePrice}" th:onclick="putSubmit(this.getAttribute('no'),this.getAttribute('name'),this.getAttribute('price'))"></span></td>
+                <td><span><input type="button" value="삭제" th:no="${product.productNo}" th:onclick="deleteSubmit(this.getAttribute('no'))"></span></td>
+
+            </form>
+
+        </tr>
+    </table>
+    <h1>상품 등록</h1>
+    <form action="/product" method="POST">
+        <div style="width:300px;">product Name : <input name="productName" type="text"></div>
+        <div style="width:300px;">product salePrice : <input name="salePrice" type="text"></div>
+        <input type="submit" value="등록">
+    </form>
+
+
+</body>
+</html>
